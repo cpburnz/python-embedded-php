@@ -1,0 +1,103 @@
+
+
+
+
+Magento Requirements:
+
+- dom
+- mcrypt
+- mhash
+- mysql
+- mysqli
+- pdo-mysql
+- simplexml
+
+
+
+Compiling PHP
+=============
+
+A step-by-step guide is available for building PHP on Windows XP from
+`Build your own PHP on Windows <https://wiki.php.net/internals/windows/stepbystepbuild>`_.
+
+
+Environment
+-----------
+
+For the build environment, I used php-5.3.13 along with the available tools
+dependencies, MSVC9 (Visual C++ 2008 Express).
+
+There are the files I downloaded:
+
+- `php-5.3.13.tar.bz2 <http://us.php.net/distributions/php-5.3.13.tar.bz2>`_ from `<http://php.net/downloads.php>`_.
+- `php-sdk-binary-tools-20110915.zip <http://windows.php.net/downloads/php-sdk/php-sdk-binary-tools-20110915.zip>`_ from `<http://windows.php.net/downloads/php-sdk/>`_.
+- `deps-5.3-vc9-x86.7z <http://windows.php.net/downloads/php-sdk/deps-5.3-vc9-x86.7z>`_ for dependencies from `<http://windows.php.net/downloads/php-sdk/>`_.
+- `Visual C++ 2008 Express <http://download.microsoft.com/download/E/8/E/E8EEB394-7F42-4963-A2D8-29559B738298/VS2008ExpressWithSP1ENUX1504728.iso>`_ (MSVC9) from `<http://www.microsoft.com/visualstudio/en-us/products/2008-editions/express>`_.
+- `Windows SDK 6.1 <http://download.microsoft.com/download/f/e/6/fe6eb291-e187-4b06-ad78-bb45d066c30f/6.0.6001.18000.367-KRMSDK_EN.iso>`_ from `<http://www.microsoft.com/en-us/download/details.aspx?id=24826>`_.
+
+
+Configure
+---------
+
+After the build environment is setup, to configure the build run the following
+command::
+
+	configure --enable-embed --with-mhash --with-mcrypt --with-mysql --with-mysqli --enable-pdo --with-pdo-mysql --disable-zts --disable-cgi --disable-cli --with-gd=static
+	
+This will configure PHP 5.3 with the following extensions:
+
+==========  ======
+Extension    Mode
+==========  ======
+bcmath      static
+calendar    static
+com_dotnet  static
+ctype       static
+date        static
+dom         static
+ereg        static
+filter      static
+ftp         static
+gd          static
+hash        static
+iconv       static
+json        static
+libxml      static
+mcrypt      static
+mysql       static
+mysqli      static
+mysqlnd     static
+odbc        static
+pcre        static
+pdo         static
+pdo_mysql   static
+phar        static
+reflection  static
+session     static
+simplexml   static
+spl         static
+standard    static
+tokenizer   static
+wddx        static
+xml         static
+xmlreader   static
+xmlwriter   static
+zip         static
+zlib        static
+==========  ======
+
+And the following SAPIs:
+
+=========
+SAPI Name
+=========
+embed
+=========
+
+
+Compile
+-------
+
+To finally compile PHP, execute the following command (as per the guide)::
+
+	nmake

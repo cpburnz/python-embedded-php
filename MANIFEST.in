@@ -1,0 +1,2 @@
+recursive-include pyphp *
+recursive-include inc *

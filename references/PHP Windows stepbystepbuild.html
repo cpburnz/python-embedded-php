@@ -1,0 +1,457 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" dir="ltr" lang="en"><head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <title>
+    PHP: internals:windows:stepbystepbuild    [PHP Wiki]
+  </title>
+
+  <meta name="generator" content="DokuWiki">
+<meta name="robots" content="index,follow">
+<meta name="date" content="2012-01-23T16:09:08+0100">
+<meta name="keywords" content="internals,windows,stepbystepbuild">
+<link rel="search" type="application/opensearchdescription+xml" href="https://wiki.php.net/lib/exe/opensearch.php" title="PHP Wiki">
+<link rel="start" href="https://wiki.php.net/">
+<link rel="contents" href="https://wiki.php.net/internals/windows/stepbystepbuild?do=index" title="Sitemap">
+<link rel="alternate" type="application/rss+xml" title="Recent Changes" href="https://wiki.php.net/feed.php">
+<link rel="alternate" type="application/rss+xml" title="Current Namespace" href="https://wiki.php.net/feed.php?mode=list&amp;ns=internals:windows">
+<link rel="alternate" type="text/html" title="Plain HTML" href="https://wiki.php.net/_export/xhtml/internals/windows/stepbystepbuild">
+<link rel="alternate" type="text/plain" title="Wiki Markup" href="https://wiki.php.net/_export/raw/internals/windows/stepbystepbuild">
+<link rel="canonical" href="https://wiki.php.net/internals/windows/stepbystepbuild">
+<link rel="stylesheet" media="screen" type="text/css" href="PHP%20Windows%20stepbystepbuild_files/css_002.css">
+<link rel="stylesheet" media="all" type="text/css" href="PHP%20Windows%20stepbystepbuild_files/css.css">
+<link rel="stylesheet" media="print" type="text/css" href="PHP%20Windows%20stepbystepbuild_files/css_003.css">
+<script type="text/javascript"><!--//--><![CDATA[//><!--
+var NS='internals:windows';var JSINFO = {"id":"internals:windows:stepbystepbuild","namespace":"internals:windows"};
+//--><!]]></script>
+<script type="text/javascript" charset="utf-8" src="PHP%20Windows%20stepbystepbuild_files/js.php"></script>
+
+ <style type="text/css" media="all">
+  @import url("https://static.php.net/www.php.net/styles/site.css");
+  @import url("https://static.php.net/www.php.net/styles/phpnet.css");
+ </style>
+ <!--[if IE]><![if gte IE 6]><![endif]-->
+  <style type="text/css" media="print">
+   @import url("https://static.php.net/www.php.net/styles/print.css");
+  </style>
+ <!--[if IE]><![endif]><![endif]-->
+  <style type="text/css">
+  div.dokuwiki input.button_disabled {
+    color: #999;
+  }
+  </style>
+ <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+ <link rel="shortcut icon" href="https://static.php.net/www.php.net/favicon.ico">
+ <link rel="search" type="application/opensearchdescription+xml" href="http://www.php.net/phpnetimprovedsearch.src" title="Add PHP.net search">
+ <script type="text/javascript" src="PHP%20Windows%20stepbystepbuild_files/userprefs.js"></script>
+ <script type="text/javascript">
+function installSummaryEnforcement()
+{
+    var summary_input = document.getElementById('edit__summary');
+    if(summary_input !== null)
+    {
+        var minoredit_input = document.getElementById('minoredit');
+
+        addEvent(summary_input, 'change', enforceSummary);
+        addEvent(summary_input, 'keyup', enforceSummary);
+        addEvent(minoredit_input, 'change', enforceSummary);
+        addEvent(minoredit_input, 'click', enforceSummary);
+        enforceSummary(); // summary may be there if we're previewing
+    }
+}
+
+function enforceSummary()
+{
+    var btn_save = document.getElementById('edbtn__save');
+    var summary_input = document.getElementById('edit__summary');
+    var minoredit_input = document.getElementById('minoredit');
+    var disabled = false;
+
+    if(summary_input.value.replace(/^\s+/,"") === '' && !minoredit_input.checked)
+        {disabled = true;}
+
+    if(disabled != btn_save.disabled || btn_save.disabled === null)
+    {
+        btn_save.className = disabled ? 'button button_disabled' : 'button';
+        btn_save.disabled = disabled;
+    }
+}
+
+addInitEvent(function(){installSummaryEnforcement();});
+</script>
+</head>
+<body onload="boldEvents();">
+
+<div id="headnav">
+ <a href="http://php.net/">
+  <img src="PHP%20Windows%20stepbystepbuild_files/php.gif" alt="PHP" width="120" height="67">
+ </a>
+ <div id="headmenu">
+  <a href="http://php.net/downloads.php">downloads</a> |
+  <a href="http://php.net/docs.php">documentation</a> |
+  <a href="http://php.net/FAQ.php">faq</a> |
+  <a href="http://php.net/support.php">getting help</a> |
+  <a href="http://php.net/mailing-lists.php">mailing lists</a> |
+  <a href="http://bugs.php.net/">reporting bugs</a> |
+  <a href="http://php.net/sites.php">php.net sites</a> |
+  <a href="http://php.net/links.php">links</a> |
+  <a href="http://php.net/conferences/">conferences</a> |
+  <a href="http://php.net/my.php">my php.net</a>
+ </div>
+</div>
+
+<div id="headsearch"><br></div>
+
+<br>
+
+<div class="dokuwiki">
+  
+  <div class="stylehead">
+
+    <div class="header">
+      <div class="pagename">
+        [[<a href="https://wiki.php.net/">start</a>:<a href="https://wiki.php.net/internals">internals</a>:<a href="https://wiki.php.net/internals/windows">windows</a>:<a href="https://wiki.php.net/internals/windows/stepbystepbuild">stepbystepbuild</a>]]
+    </div>
+      <div class="logo">
+        <a href="https://wiki.php.net/" name="dokuwiki__top" id="dokuwiki__top" accesskey="h" title="[ALT+H]">PHP Wiki</a>      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+    
+    <div class="bar" id="bar__top">
+      <div class="bar-left" id="bar__topleft">
+        <form class="button btn_source" method="post" action="/internals/windows/stepbystepbuild"><div class="no"><input name="do" value="edit" type="hidden"><input name="rev" value="" type="hidden"><input value="Show pagesource" class="button" accesskey="v" title="Show pagesource [V]" type="submit"></div></form>        <form class="button btn_revs" method="get" action="/internals/windows/stepbystepbuild"><div class="no"><input name="do" value="revisions" type="hidden"><input value="Old revisions" class="button" accesskey="o" title="Old revisions [O]" type="submit"></div></form>      </div>
+
+      <div class="bar-right" id="bar__topright">
+        <form class="button btn_recent" method="get" action="/internals/windows/stepbystepbuild"><div class="no"><input name="do" value="recent" type="hidden"><input value="Recent changes" class="button" accesskey="r" title="Recent changes [R]" type="submit"></div></form>        <form action="/" accept-charset="utf-8" class="search" id="dw__search" method="get"><div class="no"><input name="do" value="search" type="hidden"><input id="qsearch__in" accesskey="f" name="id" class="edit" title="[F]" type="text"><input value="Search" class="button" title="Search" type="submit"><div style="display: none;" id="qsearch__out" class="ajax_qsearch JSpopup"></div></div></form>&nbsp;
+      </div>
+
+      <div class="clearer"></div>
+    </div>
+
+        <div class="breadcrumbs">
+      <span class="bchead">Trace:</span> <span class="bcsep">•</span> <span class="curid"><a href="https://wiki.php.net/internals/windows/stepbystepbuild" class="breadcrumbs" title="internals:windows:stepbystepbuild">stepbystepbuild</a></span>          </div>
+    
+    
+  </div>
+  
+  
+  <div class="page">
+    <!-- wikipage start -->
+    <!-- TOC START -->
+<div class="toc">
+<div style="cursor: pointer;" class="tocheader toctoggle" id="toc__header"><span class="toc_close" id="toc__toggle"><span>−</span></span>Table of Contents</div>
+<div id="toc__inside">
+
+<ul class="toc">
+<li class="level1"><div class="li"><span class="li"><a href="#build_your_own_php_on_windows" class="toc">Build your own PHP on Windows</a></span></div>
+<ul class="toc">
+<li class="level2"><div class="li"><span class="li"><a href="#before_you_begin" class="toc">Before you Begin</a></span></div></li>
+<li class="level2"><div class="li"><span class="li"><a href="#the_build_environment" class="toc">The Build Environment</a></span></div>
+<ul class="toc">
+<li class="level3"><div class="li"><span class="li"><a href="#requirements" class="toc">Requirements</a></span></div></li>
+</ul>
+</li>
+<li class="level2"><div class="li"><span class="li"><a href="#setup" class="toc">Setup</a></span></div></li>
+</ul></li>
+</ul>
+</div>
+</div>
+<!-- TOC END -->
+
+<h1 class="sectionedit1"><a name="build_your_own_php_on_windows" id="build_your_own_php_on_windows">Build your own PHP on Windows</a></h1>
+<div class="level1">
+
+</div>
+
+<h2 class="sectionedit2"><a name="before_you_begin" id="before_you_begin">Before you Begin</a></h2>
+<div class="level2">
+
+<p>
+Building <acronym title="Hypertext Preprocessor">PHP</acronym> on Windows will require three things
+</p>
+<ol>
+<li class="level1"><div class="li"> A properly set up build environment, including a compiler with the right <acronym title="Software Development Kit">SDK</acronym>'s and some binary tools used by the build system</div>
+</li>
+<li class="level1"><div class="li"> Prebuilt libraries and headers for third party libraries that <acronym title="Hypertext Preprocessor">PHP</acronym> uses in the correct location</div>
+</li>
+<li class="level1"><div class="li"> The <acronym title="Hypertext Preprocessor">PHP</acronym> source</div>
+</li>
+</ol>
+
+</div>
+
+<h2 class="sectionedit3"><a name="the_build_environment" id="the_build_environment">The Build Environment</a></h2>
+<div class="level2">
+
+<p>
+This is the hardest part of the <acronym title="Hypertext Preprocessor">PHP</acronym> windows build system to set up and will take up a lot of space on your hard drive - you need to have several <acronym title="Gigabyte">GB</acronym> of space free.
+</p>
+
+</div>
+
+<h3 class="sectionedit4"><a name="requirements" id="requirements">Requirements</a></h3>
+<div class="level3">
+<ul>
+<li class="level1"><div class="li"> Microsoft Visual C++, <acronym title="Hypertext Preprocessor">PHP</acronym>
+ officially supports building with Visual C++ 6.0 or with Visual C++ 9 
+(also known as Visual C++ 2008 just to be confusing).  You can use the 
+Express versions as well.  MinGW and other compilers are NOT supported 
+or even known to work.  For more information and how to get the compiler
+ see the <a href="https://wiki.php.net/internals/windows/compiler" class="wikilink1" title="internals:windows:compiler">supported versions</a></div>
+</li>
+<li class="level1"><div class="li"> The correct Windows <acronym title="Software Development Kit">SDK</acronym> or Platform <acronym title="Software Development Kit">SDK</acronym> to match your compiler.   see this <a href="https://wiki.php.net/internals/windows/windowssdk" class="wikilink1" title="internals:windows:windowssdk">page</a> for the supported versions</div>
+</li>
+<li class="level1"><div class="li"> Various tools, see <a href="http://windows.php.net/downloads/php-sdk/" class="urlextern" title="http://windows.php.net/downloads/php-sdk/" rel="nofollow">http://windows.php.net/downloads/php-sdk/</a> for binary versions of them</div>
+</li>
+</ul>
+
+</div>
+
+<h2 class="sectionedit5"><a name="setup" id="setup">Setup</a></h2>
+<div class="level2">
+
+</div>
+
+<h5><a name="quick_n_easy" id="quick_n_easy">Quick 'n' easy</a></h5>
+<div class="level5">
+<ol>
+<li class="level1"><div class="li"> get visual studio 2008 (no matter what version - <a href="http://www.microsoft.com/express/downloads/#Visual_Studio_2008_Express_Downloads" class="urlextern" title="http://www.microsoft.com/express/downloads/#Visual_Studio_2008_Express_Downloads" rel="nofollow"> express</a>, pro or others; all should work) and install it</div>
+</li>
+<li class="level1"><div class="li"> get and install windows sdk 6.1</div>
+</li>
+<li class="level1"><div class="li"> get a php 5.3 <a href="http://snaps.php.net/" class="urlextern" title="http://snaps.php.net" rel="nofollow"> snapshot </a> (do not extract yet!)</div>
+</li>
+<li class="level1"><div class="li"> create the folder “c:\php-sdk“</div>
+</li>
+<li class="level1"><div class="li"> unpack the binary-tools.zip archive (<a href="http://windows.php.net/downloads/php-sdk/" class="urlextern" title="http://windows.php.net/downloads/php-sdk/" rel="nofollow">http://windows.php.net/downloads/php-sdk/</a>) into this directory, there should be one sub-directory called “bin” and one called “script“</div>
+</li>
+<li class="level1"><div class="li"> open the “windows sdk 6.1 shell” (it’s available from the start menu group) and execute the following commands in it:</div>
+</li>
+<li class="level1"><div class="li"> <pre class="code bash">setenv <span class="sy0">/</span>x86 <span class="sy0">/</span>xp <span class="sy0">/</span>release</pre>
+</div>
+</li>
+<li class="level1"><div class="li"> <pre class="code bash"><span class="kw3">cd</span> c:\php-sdk\</pre>
+</div>
+</li>
+<li class="level1"><div class="li"> <pre class="code bash">bin\phpsdk_setvars.bat</pre>
+</div>
+</li>
+<li class="level1"><div class="li"> <pre class="code bash">bin\phpsdk_buildtree.bat php53dev</pre>
+</div>
+</li>
+<li class="level1"><div class="li"> now extract the snapshot from 3) to 
+C:\php-sdk\php53dev\vc9\x86 with your favourite unpacker (winrar should 
+handle it) so that the following directory gets created: 
+C:\php-sdk\php53dev\vc9\x86\php5.3-xyz</div>
+</li>
+<li class="level1"><div class="li"> in the same directory 
+(C:\php-sdk\php53dev\vc9\x86) there is a “deps” folder, extract any of 
+your required libraries inside that folder (see <a href="http://wiki.php.net/internals/windows/libs" class="urlextern" title="http://wiki.php.net/internals/windows/libs" rel="nofollow">http://wiki.php.net/internals/windows/libs</a>) but make sure their top-level contains /include and /lib (some of them have an extra directory level in there)</div>
+</li>
+<li class="level1"><div class="li"> run in the windows-sdk-shell: <pre class="code bash"><span class="kw3">cd</span> C:\php-sdk\php53dev\vc9\x86\php5.3-xyz</pre>
+</div>
+</li>
+<li class="level1"><div class="li"> <pre class="code bash">buildconf</pre>
+</div>
+</li>
+<li class="level1"><div class="li"> to get an overview of the compiling flags: <pre class="code bash">configure <span class="re5">--help</span></pre>
+</div>
+</li>
+<li class="level1"><div class="li"> create your configure command: <pre class="code bash">configure <span class="re5">--disable-all</span> <span class="re5">--enable-cli</span> --enable-<span class="re1">$remains</span></pre>
+
+<p>
+ (warning: some extensions need libraries, header files and helper apps, see <a href="https://wiki.php.net/internals/windows/libs" class="wikilink1" title="internals:windows:libs">libs</a>, fetch the version you need and extract the archive in the deps directory, ie: c:\php-sdk\php53\vc9\x86\deps)
+</p>
+</div>
+</li>
+<li class="level1"><div class="li"> <pre class="code bash">nmake</pre>
+</div>
+</li>
+<li class="level1"><div class="li"> if you want the resulting php to be zipped (comes handy for redist, believe me!), run after this also: <pre class="code bash">nmake snap</pre>
+</div>
+</li>
+<li class="level1"><div class="li"> the compiled php is now under 
+C:\php-sdk\php53dev\vc9\x86\php5.3-SNAPSHOTTIME\Release_TS, same as the 
+zip file (if you created it).</div>
+</li>
+</ol>
+
+</div>
+
+<h5><a name="adding_pecl_extensions_using_dbase_as_an_example" id="adding_pecl_extensions_using_dbase_as_an_example">Adding PECL extensions (using 'dbase' as an example)</a></h5>
+<div class="level5">
+<ol>
+<li class="level1"><div class="li"> <pre class="code bash"><span class="kw3">cd</span> C:\php-sdk\php53dev\vc9\x86</pre>
+</div>
+</li>
+<li class="level1"><div class="li"> get the dbase extension code through Subversion</div>
+</li>
+<li class="level1"><div class="li"> <pre class="code bash"><span class="kw2">svn</span> <span class="kw2">co</span> http:<span class="sy0">//</span>svn.php.net<span class="sy0">/</span>repository<span class="sy0">/</span>pecl<span class="sy0">/</span>dbase<span class="sy0">/</span>trunk pecl<span class="sy0">/</span>dbase</pre>
+</div>
+</li>
+<li class="level1"><div class="li"> <pre class="code bash"><span class="kw3">cd</span> php5.3-xyz</pre>
+</div>
+</li>
+<li class="level1"><div class="li"> <pre class="code bash">buildconf</pre>
+</div>
+</li>
+<li class="level1"><div class="li"> executing <pre class="code bash">configure <span class="re5">--help</span></pre>
+
+<p>
+ should now contain a dbase option
+</p>
+</div>
+</li>
+<li class="level1"><div class="li"> <pre class="code bash">configure <span class="re5">--enable-cli</span> <span class="re5">--enable-dbase</span></pre>
+</div>
+</li>
+<li class="level1"><div class="li"> <pre class="code bash">nmake</pre>
+</div>
+</li>
+<li class="level1"><div class="li"> test the binary with a <pre class="code bash">php <span class="re5">-m</span></pre>
+
+<p>
+ command, to make sure dbase exists
+</p>
+</div>
+</li>
+</ol>
+
+</div>
+
+<h5><a name="ldap_support_notes" id="ldap_support_notes">LDAP Support Notes</a></h5>
+<div class="level5">
+<ol>
+<li class="level1"><div class="li"> add ”–with-ldap” to your configure</div>
+</li>
+<li class="level1"><div class="li"> make sure to package your generated 
+binaries with libsasl.dll, which will not be built through this process -
+ you can find it inside your C:\php-sdk\php53dev\vc9\x86\deps\bin\ 
+folder, or you can download it from one of the <acronym title="Hypertext Preprocessor">PHP</acronym> <a href="http://windows.php.net/download/" class="urlextern" title="http://windows.php.net/download/" rel="nofollow">official binary packages</a></div>
+</li>
+</ol>
+
+</div>
+
+<h4><a name="pitfalls" id="pitfalls">Pitfalls</a></h4>
+<div class="level4">
+
+</div>
+
+<h5><a name="fatal_error_c1900mismatch_between_p1_version_200801116_and_p2_version_20070207" id="fatal_error_c1900mismatch_between_p1_version_200801116_and_p2_version_20070207">fatal error C1900: [] mismatch between 'P1' version '200801116' and 'P2' version '20070207'</a></h5>
+<div class="level5">
+
+<p>
+If you are using Visual Studio 2008 Express and Platform <acronym title="Software Development Kit">SDK</acronym>
+ 6.1 make sure you have the latest versions and check for version 
+incompatibilities. There are known issues with old versions of VS 2008 
+Express and Platform <acronym title="Software Development Kit">SDK</acronym> 6.1.  
+</p>
+
+<p>
+The order in which you install the Visual Studio 2008 Express Edition and Platform <acronym title="Software Development Kit">SDK</acronym> 6.1 is important due to the issue reported in <a href="http://www.microsoft.com/downloads/en/details.aspx?FamilyID=e6e1c3df-a74f-4207-8586-711ebe331cdc&amp;displaylang=en#ctl00_ctl13_Overview" class="urlextern" title="http://www.microsoft.com/downloads/en/details.aspx?FamilyID=e6e1c3df-a74f-4207-8586-711ebe331cdc&amp;displaylang=en#ctl00_ctl13_Overview" rel="nofollow">Windows SDK for Windows Server 2008 and .NET Framework 3.5 Overview</a>, <a href="http://blogs.msdn.com/b/windowssdk/archive/2009/08/07/windows-sdk-for-server-2008-v6-1-overwrites-vs2008-sp1-crt-files.aspx" class="urlextern" title="http://blogs.msdn.com/b/windowssdk/archive/2009/08/07/windows-sdk-for-server-2008-v6-1-overwrites-vs2008-sp1-crt-files.aspx" rel="nofollow">Windows SDK for Server 2008 (v6.1) overwrites VS2008 SP1 CRT files</a> and <a href="http://blogs.msdn.com/b/windowssdk/archive/2009/08/07/installing-windows-sdk-for-server-2008-v6-1-after-vs2008-sp1-causes-conflicts-with-security-update-kb971092.aspx" class="urlextern" title="http://blogs.msdn.com/b/windowssdk/archive/2009/08/07/installing-windows-sdk-for-server-2008-v6-1-after-vs2008-sp1-causes-conflicts-with-security-update-kb971092.aspx" rel="nofollow">Installing Windows SDK for Server 2008 (v6.1) after VS2008 SP1 causes conflicts with Security Update (KB971092)</a>. Install the <acronym title="Software Development Kit">SDK</acronym> first, with any of its service packs and security updates before installing Visual Studio 2008 Express Edition.
+</p>
+
+<p>
+Make sure that you are running setenv /xp /x86. For example, setenv /xp 
+/x64 or setenv /vista /x64 causes the above error message even if you 
+are using Visual Studio 2008 Express SP1 and Platform <acronym title="Software Development Kit">SDK</acronym> 6.1 (60001.18000.367) on a Vista 64bit system.
+</p>
+
+</div>
+
+    <!-- wikipage stop -->
+  </div>
+
+  <div class="clearer">&nbsp;</div>
+
+  
+  <div class="stylefoot">
+
+    <div class="meta">
+      <div class="user">
+              </div>
+      <div class="doc">
+        internals/windows/stepbystepbuild.txt · Last modified: 2012/01/23 16:09 by jmckenna      </div>
+    </div>
+
+   
+    <div class="bar" id="bar__bottom">
+      <div class="bar-left" id="bar__bottomleft">
+        <form class="button btn_source" method="post" action="/internals/windows/stepbystepbuild"><div class="no"><input name="do" value="edit" type="hidden"><input name="rev" value="" type="hidden"><input value="Show pagesource" class="button" accesskey="v" title="Show pagesource [V]" type="submit"></div></form>        <form class="button btn_revs" method="get" action="/internals/windows/stepbystepbuild"><div class="no"><input name="do" value="revisions" type="hidden"><input value="Old revisions" class="button" accesskey="o" title="Old revisions [O]" type="submit"></div></form>      </div>
+      <div class="bar-right" id="bar__bottomright">
+                                <form class="button btn_login" method="get" action="/internals/windows/stepbystepbuild"><div class="no"><input name="do" value="login" type="hidden"><input name="sectok" value="1b6b25bd2faa2b6977001a8392d9835f" type="hidden"><input value="Login" class="button" title="Login" type="submit"></div></form>        <form class="button btn_index" method="get" action="/internals/windows/stepbystepbuild"><div class="no"><input name="do" value="index" type="hidden"><input value="Sitemap" class="button" accesskey="x" title="Sitemap [X]" type="submit"></div></form>        <a class="nolink" href="#dokuwiki__top"><input class="button" value="Back to top" onclick="window.scrollTo(0, 0)" title="Back to top" type="button"></a>&nbsp;
+      </div>
+      <div class="clearer"></div>
+    </div>
+
+  </div>
+
+</div>
+
+<div id="footnav">
+<a href="http://php.net/feed.atom">Atom</a> | <a href="http://php.net/source.php?url=/index.php">show source</a> |
+ <a href="http://php.net/credits.php">credits</a> |
+ <a href="http://php.net/stats/">stats</a> |
+ <a href="http://php.net/sitemap.php">sitemap</a> |
+ <a href="http://php.net/contact.php">contact</a> |
+ <a href="http://php.net/contact.php#ads">advertising</a> |
+ <a href="http://php.net/mirrors.php">mirror sites</a>
+</div>
+
+<div id="pagefooter">
+ <div id="copyright">
+  <a href="http://php.net/copyright.php">Copyright © 2001-2012 The PHP Group</a><br>
+  All rights reserved.
+ </div>
+ <br>
+ 
+<div class="footerinc">
+  <a href="https://wiki.php.net/feed.php" title="Recent changes RSS feed"><img src="PHP%20Windows%20stepbystepbuild_files/button-rss.bin" alt="Recent changes RSS feed" width="80" height="15"></a>
+
+  <a href="http://php.net/manual/en/cc.license.php" rel="license" title="Creative Commons License"><img src="PHP%20Windows%20stepbystepbuild_files/button-cc.gif" alt="Creative Commons License" width="80" height="15"></a>
+
+  <a href="http://www.php.net/" title="Powered by PHP"><img src="PHP%20Windows%20stepbystepbuild_files/button-php.gif" alt="Powered by PHP" width="80" height="15"></a>
+
+  <a href="http://validator.w3.org/check/referer" title="Valid XHTML 1.0"><img src="PHP%20Windows%20stepbystepbuild_files/button-xhtml.bin" alt="Valid XHTML 1.0" width="80" height="15"></a>
+
+  <a href="http://jigsaw.w3.org/css-validator/check/referer?profile=css3" title="Valid CSS"><img src="PHP%20Windows%20stepbystepbuild_files/button-css.bin" alt="Valid CSS" width="80" height="15"></a>
+
+  <a href="http://wiki.splitbrain.org/wiki:dokuwiki" title="Driven by DokuWiki"><img src="PHP%20Windows%20stepbystepbuild_files/button-dw.bin" alt="Driven by DokuWiki" width="80" height="15"></a>
+
+
+
+<!--
+
+<rdf:RDF xmlns="http://web.resource.org/cc/"
+    xmlns:dc="http://purl.org/dc/elements/1.1/"
+    xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+<Work rdf:about="">
+   <dc:type rdf:resource="http://purl.org/dc/dcmitype/Text" />
+   <license rdf:resource="http://php.net/manual/en/cc.license.php" />
+</Work>
+
+<License rdf:about="http://php.net/manual/en/cc.license.php">
+   <permits rdf:resource="http://web.resource.org/cc/Reproduction" />
+   <permits rdf:resource="http://web.resource.org/cc/Distribution" />
+   <requires rdf:resource="http://web.resource.org/cc/Notice" />
+   <requires rdf:resource="http://web.resource.org/cc/Attribution" />
+   <prohibits rdf:resource="http://web.resource.org/cc/CommercialUse" />
+   <permits rdf:resource="http://web.resource.org/cc/DerivativeWorks" />
+   <requires rdf:resource="http://web.resource.org/cc/ShareAlike" />
+</License>
+
+</rdf:RDF>
+
+-->
+
+
+</div>
+ <br>
+</div>
+
+<div class="no"><img class="zmhpopshegfapuzgntko" src="PHP%20Windows%20stepbystepbuild_files/indexer.gif" alt="" width="2" height="1"></div>
+
+
+<div aria-labelledby="ui-dialog-title-media__popup_content" role="dialog" tabindex="-1" class="ui-dialog ui-widget ui-widget-content ui-corner-all ui-draggable" style="display: none; z-index: 1000; outline: 0px none;"><div class="ui-dialog-titlebar ui-widget-header ui-corner-all ui-helper-clearfix"><span id="ui-dialog-title-media__popup_content" class="ui-dialog-title">Link settings</span><a role="button" class="ui-dialog-titlebar-close ui-corner-all" href="#"><span class="ui-icon ui-icon-closethick">close</span></a></div><div class="ui-dialog-content ui-widget-content" id="media__popup_content"><p id="media__link"><label>Link target</label><button title="Link to detail page" id="media__linkbtn1" class="button"><img src="PHP%20Windows%20stepbystepbuild_files/media_link_lnk.bin"></button><button title="Direct link to original" id="media__linkbtn2" class="button"><img src="PHP%20Windows%20stepbystepbuild_files/media_link_direct.bin"></button><button title="No link" id="media__linkbtn3" class="button"><img src="PHP%20Windows%20stepbystepbuild_files/media_link_nolnk.bin"></button><button title="Show only the link." id="media__linkbtn4" class="button"><img src="PHP%20Windows%20stepbystepbuild_files/media_link_displaylnk.bin"></button></p><p id="media__align"><label>Alignment</label><button title="Use no align." id="media__alignbtn1" class="button"><img src="PHP%20Windows%20stepbystepbuild_files/media_align_noalign.bin"></button><button title="Align the image on the left." id="media__alignbtn2" class="button"><img src="PHP%20Windows%20stepbystepbuild_files/media_align_left.bin"></button><button title="Align the image in the middle." id="media__alignbtn3" class="button"><img src="PHP%20Windows%20stepbystepbuild_files/media_align_center.bin"></button><button title="Align the image on the right." id="media__alignbtn4" class="button"><img src="PHP%20Windows%20stepbystepbuild_files/media_align_right.bin"></button></p><p id="media__size"><label>Image size</label><button title="Small version" id="media__sizebtn1" class="button"><img src="PHP%20Windows%20stepbystepbuild_files/media_size_small.bin"></button><button title="Medium version" id="media__sizebtn2" class="button"><img src="PHP%20Windows%20stepbystepbuild_files/media_size_medium.bin"></button><button title="Large version" id="media__sizebtn3" class="button"><img src="PHP%20Windows%20stepbystepbuild_files/media_size_large.bin"></button><button title="Original version" id="media__sizebtn4" class="button"><img src="PHP%20Windows%20stepbystepbuild_files/media_size_original.bin"></button></p><p><input value="Insert" class="button" id="media__sendbtn" type="button"></p></div></div></body></html>
